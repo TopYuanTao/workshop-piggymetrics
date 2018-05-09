@@ -19,7 +19,7 @@ echo "==API gateway Access FAILED: Please check soon "
 exit 1
 }
 
-# read -t 10 -p "Parameters, OK?"
+read -t 10 -p "Parameters, OK?"
 
 #1. Deploy Gitlab and push code automatically
 # -----------------------------------------
@@ -69,98 +69,102 @@ done
 
 cd ${SHPATH}
 
-#3. Add Build Project Definition in Alauda EE
+#3. Create Build Project Definition in Alauda EE
 # -----------------------------------------
 cd script
 ./create_build_cfg.sh  || {
-echo "==FAILED.3: Create Build Project failed. "
+echo "==FAILED.3: Create Build Project Failed. "
 exit 1
 }
 echo "==SUCCESS.3: Create Build Project in Alauda EE! =="
 
 cd ${SHPATH}
 
-#4. Build Project in Alauda EE
+#4. Start Build Project in Alauda EE
 # -----------------------------------------
 cd script
-./start_build-project.sh || {
-echo "==FAILED.4"
+./start_build_project.sh || {
+echo "==FAILED.4 Start Build Project Failed"
 exit 1
 }
-echo "==SUCCESS.4: Build Project"
+echo "==SUCCESS.4: Start Build Project for Docker Image"
 
 cd ${SHPATH}
 
 
-#4.1 Images Sync project
+#5. Create Images Sync project in Alauda EE
+# -----------------------------------------
 cd script
 ./create_registry_sync.sh || {
-echo "==FAILED.4-1"
+echo "==FAILED.5 Create Image Sync Project Failed"
 exit 1
 }
-echo "SUCCESS.4-1"
+echo "SUCCESS.5 Create Image Sync Project"
 
 cd ${SHPATH}
 
 
-# 4.2 Start Images Sync
+#6. Start Images Sync in Alauda EE
+# -----------------------------------------
 cd script
 ./start_registry_sync.sh || {
-echo "==FAILED.4-2"
+echo "==FAILED.6 Start Image Sync Project Failed"
 exit 1
 }
-echo "SUCCESS.4-2"
+echo "SUCCESS.6 Start Image Sync Project"
 
 cd ${SHPATH}
 
 
-#5. Add Application Template in Alauda EE
+#7. Add Application Template in Alauda EE
 # -----------------------------------------
 cd script
 ./create_application_template.sh || {
-echo "==FAILED.5: Please check it before running .sh"
+echo "==FAILED.7: Please check it before running .sh"
 exit 1
 }
-echo "==SUCCESS.5: Create application template in Alauda EE! =="
+echo "==SUCCESS.7: Create application template in Alauda EE! =="
 
 cd ${SHPATH}
 
 
-#6. Create Application From Template
+#8. Create Application From Template in Alauda EE
+# -----------------------------------------
 cd script 
 ./start_application.sh || {
-echo "==FAILED.6"
+echo "==FAILED.8: Create Application Failed."
 exit 1
 }
-echo "==SUCCESS.6"
+echo "==SUCCESS.8: Create Application!!"
 
 cd ${SHPATH}
 
 
-#7. Create Pipeline profile & Start
+#9. Create Pipeline for update service & Start in Alauda EE
+# -----------------------------------------
 cd script
-./create_pipeline.sh || {
-echo "==FAILED.7"
+./create_pipeline_update_service.sh || {
+echo "==FAILED.9: Create Pipeline Failed"
 exit 1
 }
-echo "==SUCCESS.7"
+echo "==SUCCESS.9: Create Pipeline."
 
 cd ${SHPATH}
 
 
-#8. Create Monitor dashboard
+#x. Create Monitor dashboard in Alauda EE
+# -----------------------------------------
 cd script 
-./create_monitro_dashboard.sh || {
-echo "==FAILED.8"
+./create_monitor_dashboard.sh || {
+echo "==FAILED.x: Create Dashboard for Application Failed"
 exit 1
 }
-echo "==SUCCESS.8"
+echo "==SUCCESS.x: Create Dashboard for Application "
 
 cd ${SHPATH}
 
-#9. Test
-
-
+#x1. Create Pipeline for Test in Alauda EE
+# -----------------------------------------
 
 
 cd ${SHPATH}

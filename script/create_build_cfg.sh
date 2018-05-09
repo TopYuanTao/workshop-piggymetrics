@@ -22,7 +22,7 @@ echo ${endpoint_id}
 cd code/current/${GITLAB_PROJECT}
 for srv in $(find . -name alaudaci.yml | awk -F'/' '{print $2}'); do
 echo ${srv}
-FULLNAME="${PREFIX}${srv}"
+FULLNAME="${BUILD_PREFIX}-${srv}"
 cat > $TMPDIR/$FULLNAME.json <<EOF
 {
     "name": "$FULLNAME",

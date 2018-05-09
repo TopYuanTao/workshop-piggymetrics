@@ -49,7 +49,7 @@ for srv in $(find . -name alaudaci.yml | awk -F'/' '{print $2}'); do
                     "internal_id": "'"${REGISTRY_ID}"'"
                   }],
                   "space_name": "dev-space",
-                  "config_name": "'"syncimage2ops-${srv}"'",
+                  "config_name": "'"${SYNC_PREFIX}-sync-ops-${srv}"'",
                   "cpu": 0.5,
                   "memory": 512,
                   "namespace": "demo"

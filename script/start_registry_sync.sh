@@ -17,7 +17,7 @@ for srv in $(find . -name alaudaci.yml | awk -F'/' '{print $2}'); do
             -H "Content-Type: application/json"            \
             -d '
                 {
-                  "config_name": "'"syncimage2ops-${srv}"'",
+                  "config_name": "'"${SYNC_PREFIX}-sync-ops-${srv}"'",
                   "tag": "latest",
                   "dest_id_list": ["'"${DEST_ID}"'"],
                   "namespace": "'"${ROOT_ACCOUNT}"'"

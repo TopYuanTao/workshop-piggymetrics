@@ -61,7 +61,7 @@ registry:
     - 'config:config'
   alauda_lb: ALB
   ports:
-    - '${ALB_TYPE}-${ALB_HOST//./-}:8762:8761/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8761:8761/http'
   number: 2
   net: flannel
 
@@ -76,6 +76,9 @@ gateway:
   alauda_lb: ALB
   ports:
     - '${ALB_TYPE}-${ALB_HOST//./-}:80:4000/http'
+  domain:
+    - piggymetrics.test.com
+    - piggymetrics.demo.com
   net: flannel
  
 auth-service:
@@ -146,7 +149,7 @@ monitoring:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - '${ALB_TYPE}-${ALB_HOST//./-}:8980:8080/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8970:8080/http'
     - '8989'
   net: flannel
 
@@ -161,39 +164,29 @@ zipkin:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - '${ALB_TYPE}-${ALB_HOST//./-}:8990:9411/tcp'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8989:9411/tcp'
   net: flannel
 EOF
 
-#Create app_template
-# curl -s -X POST                                         \
-#         -H "Authorization: Token $ROOT_ACCOUNT_TOKEN"               \
-#         -H "Cache-Control: no-cache"                   \
-#         -F "template=@$TMPDIR/app_template.tpl"        \
-#         -F "name=${APPLICATION_TEMPLATE}"                         \
-#         -F "description=${APPLICATION_TEMPLATE} IN ${SPACE_NAME}"                  \
-#         -F "space_name=${SPACE_NAME}"                  \
-#         -H "Content-Type: multipart/form-data;charset=UTF-8" \
-#         "$API_URL/application-templates/$ROOT_ACCOUNT/"
 
 curl -s -X POST "${API_URL}/applications/${ROOT_ACCOUNT}" \
      -H "Authorization: Token $ROOT_ACCOUNT_TOKEN" \
      -H "Cache-Control: no-cache" \
      -H "Content-Type: multipart/form-data;charset=UTF-8" \
      -F "services=@$TMPDIR/app_template.tpl" \
-     -F "app_name=${APPLICATION_TEMPLATE}" \
-     -F "region=dev" \
+     -F "app_name=${APPLICATION}" \
+     -F "region=${REGION}" \
      -F "space_name=${SPACE_NAME}"
 
 STATUS="INIT"
 until [ ${STATUS} == "Running" ]; do
-    STATUS=$(curl -s "$API_URL/applications/${ROOT_ACCOUNT}?project_name=${APPLICATION_TEMPLATE}&region=dev" \
+    STATUS=$(curl -s "$API_URL/applications/${ROOT_ACCOUNT}?project_name=${APPLICATION}&region=${REGION}" \
         -H "Authorization: Token $ROOT_ACCOUNT_TOKEN" \
         -H "Cache-Control: no-cache" \
         -H "Content-Type: application/json" \
     | jq '.[].current_status' | sed 's/"//g')
 
-   echo "${APPLICATION_TEMPLATE} ${STATUS}"
+   echo "${APPLICATION} ${STATUS}"
    sleep 60
 done 
 

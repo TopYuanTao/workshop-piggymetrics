@@ -61,7 +61,7 @@ registry:
     - 'config:config'
   alauda_lb: ALB
   ports:
-    - '${ALB_TYPE}-${ALB_HOST//./-}:8762:8761/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8761:8761/http'
   number: 2
   net: flannel
 
@@ -76,6 +76,9 @@ gateway:
   alauda_lb: ALB
   ports:
     - '${ALB_TYPE}-${ALB_HOST//./-}:80:4000/http'
+  domain:
+    - piggymetrics.test.com
+    - piggymetrics.demo.com
   net: flannel
  
 auth-service:
@@ -146,7 +149,7 @@ monitoring:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - '${ALB_TYPE}-${ALB_HOST//./-}:8980:8080/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8970:8080/http'
     - '8989'
   net: flannel
 
@@ -161,7 +164,7 @@ zipkin:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - '${ALB_TYPE}-${ALB_HOST//./-}:8990:9411/tcp'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8989:9411/tcp'
   net: flannel
 EOF
 

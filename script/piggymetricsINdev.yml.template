@@ -1,5 +1,5 @@
 rabbitmq:
-  image: ${REGISTRY_ADDR}/${REGISTRY_PROJECT_COMMON}/rabbitmq
+  image: ${REGISTRY_ADDR}/${REGISTRY_PROJECT_COMMON}/rabbitmq:3-management
   ports:
     - '15672'
     - '5672'
@@ -15,14 +15,14 @@ data-mongodb:
   net: flannel
 
 elasticsearch:
-  image: ${REGISTRY_ADDR}/${REGISTRY_PROJECT_COMMON}/elasticsearch
+  image: ${REGISTRY_ADDR}/${REGISTRY_PROJECT_COMMON}/elasticsearch:update
   size: M
   environment:
     ES_JAVA_OPTS: -Xms384m -Xmx384m
   alauda_lb: ALB
   ports:
-    - 'haproxy-${ALB_HOST//./-}:9200:9200/http'
-    - 'haproxy-${ALB_HOST//./-}:9300:9300/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:9200:9200/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:9300:9300/http'
   net: flannel
 
 config:
@@ -43,7 +43,7 @@ registry:
   size: M
   environment:
     CONFIG_SERVICE_PASSWORD: admin
-    RUN_ARGS: --spring.profiles.active=docker --ALAUDA_EUREKA_DNS=eureka-hl-01.${REGISTRY_PROJECT}indev--dev-space.svc.cluster.local
+    RUN_ARGS: --spring.profiles.active=docker --ALAUDA_EUREKA_DNS=eureka-hl-01.${REGISTRY_PROJECT}--${SPACE_NAME}.svc.cluster.local
   kubernetes_config:
     services:
     - name: eureka-hl-01
@@ -52,7 +52,7 @@ registry:
     - 'config:config'
   alauda_lb: ALB
   ports:
-    - 'haproxy-${ALB_HOST//./-}:8762:8761/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8761:8761/http'
   number: 2
   net: flannel
 
@@ -66,7 +66,10 @@ gateway:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - 'haproxy-${ALB_HOST//./-}:80:4000/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:80:4000/http'
+  domain:
+    - piggymetrics.test.com
+    - piggymetrics.demo.com
   net: flannel
  
 auth-service:
@@ -137,7 +140,7 @@ monitoring:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - 'haproxy-${ALB_HOST//./-}:8980:8080/http'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8970:8080/http'
     - '8989'
   net: flannel
 
@@ -152,5 +155,5 @@ zipkin:
     - 'registry:registry'
   alauda_lb: ALB
   ports:
-    - 'haproxy-${ALB_HOST//./-}:8990:9411/tcp'
+    - '${ALB_TYPE}-${ALB_HOST//./-}:8989:9411/tcp'
   net: flannel
